@@ -1,6 +1,8 @@
 package drivers;
 
 import com.codeborne.selenide.WebDriverProvider;
+import config.DeviceConfig;
+import org.aeonbits.owner.ConfigFactory;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -9,21 +11,31 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class BrowserstackDriver implements WebDriverProvider {
+    private final DeviceConfig deviceConfig;
+
+    public BrowserstackDriver() {
+        this.deviceConfig = ConfigFactory.create(DeviceConfig.class, System.getProperties());
+    }
+
+    public DeviceConfig getDeviceConfig() {
+        return deviceConfig;
+    }
+
     @Nonnull
     @Override
     public WebDriver createDriver(@Nonnull Capabilities capabilities) {
         MutableCapabilities caps = new MutableCapabilities();
 
         // Set your access credentials
-        caps.setCapability("browserstack.user", "daniilsosnovskiy_Ww940N");
-        caps.setCapability("browserstack.key", "CNW4RCY2TqbfXSy6UxmQ");
+        caps.setCapability("browserstack.user", deviceConfig.user());
+        caps.setCapability("browserstack.key", deviceConfig.key());
 
         // Set URL of the application under test
-        caps.setCapability("app", "bs://c700ce60cf13ae8ed97705a55b8e022f13c5827c");
+        caps.setCapability("app", deviceConfig.app());
 
         // Specify device and os_version for testing
-        caps.setCapability("device", "Google Pixel 3");
-        caps.setCapability("os_version", "9.0");
+        caps.setCapability("device", deviceConfig.device());
+        caps.setCapability("os_version", deviceConfig.os_version());
 
         // Set other BrowserStack capabilities
         caps.setCapability("project", "guru_hw_20");
@@ -34,7 +46,7 @@ public class BrowserstackDriver implements WebDriverProvider {
         // and desired capabilities defined above
         try {
             return new RemoteWebDriver(
-                    new URL("https://hub.browserstack.com/wd/hub"), caps);
+                    new URL(deviceConfig.url()), caps);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

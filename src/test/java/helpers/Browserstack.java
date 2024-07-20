@@ -1,13 +1,17 @@
 package helpers;
 
+import drivers.BrowserstackDriver;
+
 import static io.restassured.RestAssured.given;
 
 public class Browserstack {
-    public static String videoUrl(String sessionId) {
+    BrowserstackDriver driver = new BrowserstackDriver();
+
+    public String videoUrl(String sessionId) {
         String url = String.format("https://api.browserstack.com/app-automate/sessions/%s.json", sessionId);
 
         return given()
-                .auth().basic("daniilsosnovskiy_Ww940N", "CNW4RCY2TqbfXSy6UxmQ")
+                .auth().basic(driver.getDeviceConfig().user(), driver.getDeviceConfig().key())
                 .get(url)
                 .then()
                 .log().status()
