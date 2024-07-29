@@ -14,8 +14,7 @@ public class Browserstack {
                 .auth().basic(driver.getDeviceConfig().user(), driver.getDeviceConfig().key())
                 .get(url)
                 .then()
-                .log().status()
-                .log().body()
+                .log().all()
                 .statusCode(200)
                 .extract().path("automation_session.video_url");
     }
